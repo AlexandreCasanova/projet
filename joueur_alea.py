@@ -68,6 +68,8 @@ class FonceurStrategy(SoccerStrategy):
             return 1
             
 
+            
+
 class GoalStrategy(SoccerStrategy):
     def __init__(self):
         self.name="Goal"
@@ -93,3 +95,5 @@ class GoalStrategy(SoccerStrategy):
         else :
             return 1
             
+
+
