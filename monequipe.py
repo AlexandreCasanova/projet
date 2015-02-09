@@ -3,6 +3,10 @@ from soccersimulator import PygletObserver,ConsoleListener,LogListener
 from soccersimulator import pyglet
 from joueur_alea import RandomStrategy, GoalStrategy, FonceurStrategy
 
+from classe_basique import *
+from joueur_alea import *
+
+
 team1=SoccerTeam("Cherry")
 team1.add_player(SoccerPlayer("t1j1",FonceurStrategy()))
 
