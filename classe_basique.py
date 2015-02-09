@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import random
 import math
+from math import cos, sin
 import pyglet
 import soccersimulator
 import numpy as np
 from soccersimulator import Vector2D, SoccerBattle, SoccerPlayer, SoccerTeam, SoccerStrategy, SoccerAction
-from soccersimulator import PygletObserver,ConsoleListener,LogListener, PLAYER_RADIUS, BALL_RADIUS
+from soccersimulator import PygletObserver,ConsoleListener,LogListener, PLAYER_RADIUS, BALL_RADIUS, GAME_WIDTH, GAME_HEIGHT
 
 class AllerVersUnPoint(SoccerStrategy) :
     def __init__(self,direction):
@@ -27,7 +29,7 @@ class AllerVersUnPoint(SoccerStrategy) :
 
 
 class AllerVersBallon(SoccerStrategy) :
-    def __init__(self,direction):
+    def __init__(self):
         SoccerStrategy.__init__(self,"se_déplacer")
         self.strat = AllerVersUnPoint(Vector2D())
     def start_battle(self,state):
@@ -38,9 +40,9 @@ class AllerVersBallon(SoccerStrategy) :
         self.strat.direction = state.ball.position
         return self.strat.compute_strategy(state,player,teamid)
     def copy(self):
-        return AllerVersBallon(self.direction)
+        return AllerVersBallon()
     def create_strategy(self):
-        return AllerVersBallon(self.direction)
+        return AllerVersBallon()
 
 
 class Tirer(SoccerStrategy) :
@@ -67,26 +69,26 @@ class Tirer(SoccerStrategy) :
 
 class Degager(SoccerStrategy) :
     def __init__(self):
-        SoccerStrategy.__init__(self,"tirer")
-        self.strat = Tirer(Vector2D())
+        SoccerStrategy.__init__(self,"dégager")  
     def start_battle(self,state):
         pass
     def finish_battle(self,won):
         pass
     def compute_strategy(self,state,player,teamid):
-        self.strat.direction = 
-        
-        return self.strat.compute_strategy(state,player,teamid)
+        vitesse = Vector2D(0,0)
+        tir = state.get_goal_center(self.team_adverse(teamid)) - player.position
+        tir = Vector2D(GAME_WIDTH/2 * math.cos(GAME_WIDTH/2), GAME_HEIGHT/3 * math.sin(GAME_HEIGHT/3))
+        return SoccerAction(vitesse,tir)
     def copy(self):
-        return Tirer()
+        return Degager()
     def create_strategy(self):
-        return Tirer()
+        return Degager()
     def team_adverse(self,teamid):
         if (teamid==1):
             return 2
         else :
             return 1
-
+   
 
 class ComposeStrategy(SoccerStrategy):
     def __init__(self,vitesse,tir):
@@ -102,5 +104,31 @@ class ComposeStrategy(SoccerStrategy):
         return ComposeStrategy(self.vitesse.copy(),self.tir.copy())
     def create_strategy(self):
         return ComposeStrategy()
+
+
+class Defenseur (SoccerStrategy):
+    def __init__(self):
+        SoccerStrategy.__init__(self,"Defenseur")
+    def start_battle(self,state):
+        pass
+    def finish_battle(self,won):
+        pass
+    def compute_strategy (self, state, player, teamid):
+        diff = state.ball.position - state.get_goal_center(teamid)
+        if diff.norm > 60 :
+            vitesse = state.ball.position + state.get_goal_center(teamid) - player.position - player.position
+            tir = Vector2D(0,0)
+        else :
+            vitesse = state.ball.position - player.position
+            tir = Vector2D(0,0)
         
+        return SoccerAction(vitesse,tir)
+    def copy(self):
+        return Defenseur()
+    def create_strategy(self):
+        return Defenseur()
+        
+    
+        
+
 

@@ -9,10 +9,14 @@ from joueur_alea import *
 
 teama=SoccerTeam("teama")
 teamb=SoccerTeam("teamb")
-teama.add_player(SoccerPlayer("t1j1",AllerVersUnPoint(Vector2D(90,56))))
-teamb.add_player(SoccerPlayer("t2j1",Tirer()))
-teama.add_player(SoccerPlayer("t1j2",ComposeStrategy(AllerVersUnPoint(Vector2D(GAME_WIDTH/2,GAME_HEIGHT/2)),Tirer())))
-teamb.add_player(SoccerPlayer("t2j2",GoalStrategy()))
+teama.add_player(SoccerPlayer("t1j1",FonceurStrategy()))
+teamb.add_player(SoccerPlayer("t1j2",ComposeStrategy(GoalStrategy(),Degager())))
+teama.add_player(SoccerPlayer("t1j3",ComposeStrategy(Defenseur(),Degager())))
+teamb.add_player(SoccerPlayer("t1j4",FonceurStrategy()))
+teama.add_player(SoccerPlayer("t2j1",FonceurStrategy()))
+teamb.add_player(SoccerPlayer("t2j2",FonceurStrategy()))
+teama.add_player(SoccerPlayer("t2j3",ComposeStrategy(Defenseur(),Degager())))
+teamb.add_player(SoccerPlayer("t2j4",ComposeStrategy(GoalStrategy(),Degager())))
 print teama
 print teamb
 battle=SoccerBattle(teama,teamb)
@@ -20,4 +24,4 @@ obs=PygletObserver()
 obs.set_soccer_battle(battle)
 pyglet.app.run()
 from monequipe import teams
-
+ 
