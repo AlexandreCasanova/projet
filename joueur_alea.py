@@ -5,7 +5,7 @@ import pyglet
 import soccersimulator
 import numpy as np
 from soccersimulator import Vector2D, SoccerBattle, SoccerPlayer, SoccerTeam, SoccerStrategy, SoccerAction
-from soccersimulator import PygletObserver,ConsoleListener,LogListener
+from soccersimulator import PygletObserver,ConsoleListener,LogListener, PLAYER_RADIUS, BALL_RADIUS
 
 
 	
@@ -68,8 +68,6 @@ class FonceurStrategy(SoccerStrategy):
             return 1
             
 
-            
-
 class GoalStrategy(SoccerStrategy):
     def __init__(self):
         self.name="Goal"
@@ -79,11 +77,13 @@ class GoalStrategy(SoccerStrategy):
         pass
     def compute_strategy(self,state,player,teamid):
         diff = state.ball.position - player.position
+        tir = Vector2D(0,0)
         if diff.norm > 5 :
             vitesse = state.ball.position + state.get_goal_center(teamid) - player.position - player.position
         else :
             vitesse = state.ball.position - player.position
-        tir = state.get_goal_center(self.team_adverse(teamid)) - player.position
+        if player.position.distance(state.ball.position)<(PLAYER_RADIUS+BALL_RADIUS) :    
+            tir = state.get_goal_center(self.team_adverse(teamid)) - player.position
         return SoccerAction(vitesse,tir)
     def copy(self):
         return GoalStrategy()
@@ -94,6 +94,7 @@ class GoalStrategy(SoccerStrategy):
             return 2
         else :
             return 1
+
 
 
 

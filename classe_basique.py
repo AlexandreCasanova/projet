@@ -9,6 +9,30 @@ import numpy as np
 from soccersimulator import Vector2D, SoccerBattle, SoccerPlayer, SoccerTeam, SoccerStrategy, SoccerAction
 from soccersimulator import PygletObserver,ConsoleListener,LogListener, PLAYER_RADIUS, BALL_RADIUS, GAME_WIDTH, GAME_HEIGHT
 
+
+
+
+class FonceurStrategy(SoccerStrategy):
+    def __init__(self):
+        self.name="Fonceur"
+    def start_battle(self,state):
+        pass
+    def finish_battle(self,won):
+        pass
+    def compute_strategy(self,state,player,teamid):
+        vitesse = state.ball.position - player.position
+        tir = state.get_goal_center(self.team_adverse(teamid)) - player.position
+        return SoccerAction(vitesse,tir)
+    def copy(self):
+        return FonceurStrategy()
+    def create_strategy(self):
+        return FonceurStrategy()
+    def team_adverse(self,teamid):
+        if (teamid==1):
+            return 2
+        else :
+            return 1
+
 class AllerVersUnPoint(SoccerStrategy) :
     def __init__(self,direction):
         SoccerStrategy.__init__(self,"se_déplacer")
@@ -54,7 +78,9 @@ class Tirer(SoccerStrategy) :
         pass
     def compute_strategy(self,state,player,teamid):
         vitesse = Vector2D(0,0)
-        tir = state.get_goal_center(self.team_adverse(teamid)) - player.position
+        tir = Vector2D(0,0)
+        if player.position.distance(state.ball.position)<(PLAYER_RADIUS+BALL_RADIUS):
+            tir = state.get_goal_center(self.team_adverse(teamid)) - player.position
         return SoccerAction(vitesse,tir)
     def copy(self):
         return Tirer()
@@ -67,6 +93,9 @@ class Tirer(SoccerStrategy) :
             return 1
 
 
+
+        
+        
 class Degager(SoccerStrategy) :
     def __init__(self):
         SoccerStrategy.__init__(self,"dégager")  
@@ -74,10 +103,23 @@ class Degager(SoccerStrategy) :
         pass
     def finish_battle(self,won):
         pass
+    
+    def joueurprocheballon (self, state, player, teamid):        
+        if (teamid == 1):
+            res = [state.ball.position.distance(p.position) for p in state.team1.players if p!= player]
+            m=min(res)
+            return state.team1.players[res.index(m)]        
+        else:
+            res = [state.ball.position.distance(p.position) for p in state.team2.players if p!= player]
+            m=min(res)
+            return state.team2.players[res.index(m)]    
     def compute_strategy(self,state,player,teamid):
         vitesse = Vector2D(0,0)
-        tir = state.get_goal_center(self.team_adverse(teamid)) - player.position
-        tir = Vector2D(GAME_WIDTH/2 * math.cos(GAME_WIDTH/2), GAME_HEIGHT/3 * math.sin(GAME_HEIGHT/3))
+        tir = Vector2D(0,0)
+        joueur_proche = self.joueurprocheballon(state,player,teamid)
+        if player.position.distance(state.ball.position)<=(PLAYER_RADIUS+BALL_RADIUS):
+            
+            tir = joueur_proche.position - player.position
         return SoccerAction(vitesse,tir)
     def copy(self):
         return Degager()
@@ -88,6 +130,8 @@ class Degager(SoccerStrategy) :
             return 2
         else :
             return 1
+
+# Modifier l'angle par le joueur le plus proche.
    
 
 class ComposeStrategy(SoccerStrategy):
@@ -127,8 +171,90 @@ class Defenseur (SoccerStrategy):
         return Defenseur()
     def create_strategy(self):
         return Defenseur()
-        
+
+
+class Dribble(SoccerStrategy):
+    def __init__(self):
+        SoccerStrategy.__init__(self,"dribbler")
+    def start_battle(self,state):
+        pass
+    def finish_battle(self,won):
+        pass
+    def compute_strategy(self,state,player,teamid):
+        tir = state.get_goal_center(self.team_adverse(teamid)) - player.position
+        dri = Vector2D.create_polar(tir.angle + random.random(),1)
+        return SoccerAction(Vector2D(0,0), dri)
+    def copy(self):
+        return Dribble()
+    def create_strategy(self):
+        return Dribble()
+    def team_adverse(self,teamid):
+        if (teamid==1):
+            return 2
+        else :
+            return 1
+
+
+def aleballon(self,state,player,teamid):
+   return player.position.distance(self.ball.position)<(PLAYER_RADIUS+BALL_RADIUS)
     
+    
+
+class Tudors(SoccerStrategy):
+    def __init__(self):
+        self.name="tudors"
+    def start_battle(self,state):
+        pass
+    def finish_battle(self,won):
+        pass
+    def compute_strategy(self,state,player,teamid):
+        diff = state.ball.position - player.position
+        tir = Vector2D(0,0)
+        vitesse = Vector2D(0,0)
+        if diff.norm > 100 :
+            vitesse = state.ball.position - player.position
+        if player.position.distance(state.ball.position)<(PLAYER_RADIUS+BALL_RADIUS) :    
+            tir = state.get_goal_center(self.team_adverse(teamid)) - player.position
+        return SoccerAction(vitesse,tir)
+    def copy(self):
+        return Tudors()
+    def create_strategy(self):
+        return Tudors()
+    def team_adverse(self,teamid):
+        if (teamid==1):
+            return 2
+        else :
+            return 1
+
+class SimpleSelector(SoccerStrategy):
+    def __init__(self):
+        self.name="Selecteur simple"
+        self.list_strat=[ComposeStrategy(AllerVersBallon(),Dribble()),AllerVersUnPoint(Vector2D(GAME_WIDTH/5,GAME_HEIGHT/5))]
+    def start_battle(self,state):
+        pass
+    def finish_battle(self,won):
+        pass
+    def selector(self,state,player,teamid):
+        diff = state.ball.position - player.position
+        if (diff.norm < 20):
+            return 0
+        return -1
+    def compute_strategy(self,state,player,teamid):
+        return self.list_strat[self.selector(state,player,teamid)].compute_strategy(state,player,teamid)
+    
+
+
+class PremSelector(SimpleSelector):
+    def __init__(self):
+        self.list_strat=[ComposeStrategy(AllerVersBallon(),Dribble()),AllerVersUnPoint(Vector2D(GAME_WIDTH/5,GAME_HEIGHT/5))]
+    def selector(self,state,player,teamid):
+        diff = state.ball.position - player.position
+        if (diff.norm < 20):
+            return 0
+        return -1
+
+
+
+
+
         
-
-
