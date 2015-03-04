@@ -9,10 +9,11 @@ from joueur_alea import *
 
 teama=SoccerTeam("teama")
 teamb=SoccerTeam("teamb")
-teama.add_player(SoccerPlayer("t1j1",PremSelector()))
-teamb.add_player(SoccerPlayer("t1j2",ComposeStrategy(GoalStrategy(),Degager())))
-teama.add_player(SoccerPlayer("t2j1",ComposeStrategy(GoalStrategy(),Degager())))
-teamb.add_player(SoccerPlayer("t2j2",FonceurStrategy()))
+teama.add_player(SoccerPlayer("t1j1",Counter()))
+teama.add_player(SoccerPlayer("t1j2",RandomStrategy()))
+teamb.add_player(SoccerPlayer("t2j1",RandomStrategy()))
+teamb.add_player(SoccerPlayer("t2j2",ComposeStrategy(GoalStrategy(),Degager())))
+
 print teama
 print teamb
 battle=SoccerBattle(teama,teamb)
