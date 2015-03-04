@@ -22,6 +22,6 @@ team3.add_player(SoccerPlayer("t1j2",FonceurStrategy()))
 team3.add_player(SoccerPlayer("t1j3",GoalStrategy()))
 team3.add_player(SoccerPlayer("t1j4",Defenseur()))
 
-teams =[team1,team2,team3]
+teams =[team1,team2,team3,team4]
 
 
