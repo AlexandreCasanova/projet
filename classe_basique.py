@@ -229,15 +229,17 @@ class Tudors(SoccerStrategy):
 class SimpleSelector(SoccerStrategy):
     def __init__(self):
         self.name="Selecteur simple"
-        self.list_strat=[ComposeStrategy(AllerVersBallon(),Dribble()),AllerVersUnPoint(Vector2D(GAME_WIDTH/5,GAME_HEIGHT/5))]
+        self.list_strat=[ComposeStrategy(GoalStrategy(),Degager()),FonceurStrategy,GoalStrategy()]
     def start_battle(self,state):
         pass
     def finish_battle(self,won):
         pass
     def selector(self,state,player,teamid):
         diff = state.ball.position - player.position
-        if (diff.norm < 20):
+        if (diff.norm < 10):
             return 0
+        if (aleballon):
+            return 1
         return -1
     def compute_strategy(self,state,player,teamid):
         return self.list_strat[self.selector(state,player,teamid)].compute_strategy(state,player,teamid)
@@ -246,11 +248,13 @@ class SimpleSelector(SoccerStrategy):
 
 class PremSelector(SimpleSelector):
     def __init__(self):
-       self.list_strat=[ComposeStrategy(AllerVersBallon(),Dribble()),AllerVersUnPoint(Vector2D(GAME_WIDTH/5,GAME_HEIGHT/5))] 
+       self.list_strat=[ComposeStrategy(GoalStrategy(),Degager()),FonceurStrategy,GoalStrategy()]
     def selector(self,state,player,teamid):
         diff = state.ball.position - player.position
-        if (diff.norm < 20):
+        if (diff.norm < 10):
             return 0
+        if (aleballon):
+            return 1
         return -1
         
 
