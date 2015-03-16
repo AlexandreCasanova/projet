@@ -13,8 +13,9 @@ team4=SoccerTeam("Mais_Fonce")
 team4.add_player(SoccerPlayer("t1j1",FonceurStrategy()))
 
 team2=SoccerTeam("Messi_dribble_ta_team")
-team2.add_player(SoccerPlayer("t1j1",PremSelector()))
-team2.add_player(SoccerPlayer("t1j2",ComposeStrategy(GoalStrategy(),Degager())))
+team2.add_player(SoccerPlayer("t1j1",ComposeStrategy(GoalStrategy(),Degager())))
+team2.add_player(SoccerPlayer("t1j2",PremSelector()))
+
 
 team3=SoccerTeam("One_job:Marquer")
 team3.add_player(SoccerPlayer("t1j1",FonceurStrategy()))
