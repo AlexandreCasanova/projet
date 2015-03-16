@@ -8,7 +8,7 @@ import soccersimulator
 import numpy as np
 from soccersimulator import Vector2D, SoccerBattle, SoccerPlayer, SoccerTeam, SoccerStrategy, SoccerAction, SoccerState
 from soccersimulator import PygletObserver,ConsoleListener,LogListener, PLAYER_RADIUS, BALL_RADIUS, GAME_WIDTH, GAME_HEIGHT
-from test2 import *
+
 
 class Esquive(SoccerStrategy):
     def __init__(self):
