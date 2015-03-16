@@ -274,10 +274,10 @@ class SimpleSelector(SoccerStrategy):
 
 class PremSelector(SimpleSelector):
     def __init__(self):
-       self.list_strat=[AllerVersUnPoint(Vector2D(GAME_WIDTH/9,GAME_HEIGHT/5)),ComposeStrategy(AllerVersBallon(),Dribble()),AllerVersUnPoint(Vector2D(GAME_WIDTH/1.1,GAME_HEIGHT/3))]
+       self.list_strat=[AllerVersUnPoint(Vector2D(GAME_WIDTH/9,GAME_HEIGHT/5)),FonceurStrategy(),AllerVersUnPoint(Vector2D(GAME_WIDTH/1.1,GAME_HEIGHT/3))]
     def selector(self,state,player,teamid):
         diff = state.ball.position - player.position
-        if (diff.norm < 15):
+        if (diff.norm < 20):
             return 1            
         if (teamid==1):
             return 0
