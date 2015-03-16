@@ -7,12 +7,13 @@ from soccersimulator import PygletObserver,ConsoleListener,LogListener, PLAYER_R
 from classe_basique import *
 from joueur_alea import *
 
+
 teama=SoccerTeam("teama")
 teamb=SoccerTeam("teamb")
-teama.add_player(SoccerPlayer("t1j1",Counter()))
-teama.add_player(SoccerPlayer("t1j2",RandomStrategy()))
-teamb.add_player(SoccerPlayer("t2j1",RandomStrategy()))
-teamb.add_player(SoccerPlayer("t2j2",ComposeStrategy(GoalStrategy(),Degager())))
+teama.add_player(SoccerPlayer("t1j1",GoalStrategy()))
+teama.add_player(SoccerPlayer("t1j2",FonceurStrategy()))
+teamb.add_player(SoccerPlayer("t2j1",ComposeStrategy(GoalStrategy(),Degager())))
+teamb.add_player(SoccerPlayer("t2j2",PremSelector()))
 
 print teama
 print teamb

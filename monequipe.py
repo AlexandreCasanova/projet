@@ -8,7 +8,7 @@ from joueur_alea import *
 
 
 team1=SoccerTeam("Forever_alone")
-team1.add_player(SoccerPlayer("t1j1",PremSelector()))
+team1.add_player(SoccerPlayer("t1j1",FonceurStrategy()))
 team4=SoccerTeam("Mais_Fonce")
 team4.add_player(SoccerPlayer("t1j1",FonceurStrategy()))
 
