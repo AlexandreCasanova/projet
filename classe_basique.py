@@ -277,7 +277,7 @@ class PremSelector(SimpleSelector):
        self.list_strat=[AllerVersUnPoint(Vector2D(GAME_WIDTH/9,GAME_HEIGHT/5)),FonceurStrategy(),AllerVersUnPoint(Vector2D(GAME_WIDTH/1.1,GAME_HEIGHT/3))]
     def selector(self,state,player,teamid):
         diff = state.ball.position - player.position
-        if (diff.norm < 20):
+        if (diff.norm < 25):
             return 1            
         if (teamid==1):
             return 0
