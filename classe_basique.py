@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from ToolBox import *
 import random
 import math
 from math import cos, sin
@@ -283,7 +284,3 @@ class PremSelector(SimpleSelector):
             return 0
         return -1
         
-
-        
-
-# objectif : faire un intercepteur 1v1, Finir ma stratégie 2v2, Faire une équipe full Fonceur 4v4 !
