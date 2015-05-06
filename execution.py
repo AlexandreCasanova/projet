@@ -22,5 +22,5 @@ battle=SoccerBattle(teama,teamb)
 obs=PygletObserver()
 obs.set_soccer_battle(battle)
 pyglet.app.run()
-from monequipe import teams
+#from monequipe import teams
  
