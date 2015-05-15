@@ -11,36 +11,21 @@ from soccersimulator import Vector2D, SoccerBattle, SoccerPlayer, SoccerTeam, So
 from soccersimulator import PygletObserver,ConsoleListener,LogListener, PLAYER_RADIUS, BALL_RADIUS, GAME_WIDTH, GAME_HEIGHT
 
 
-class Esquive(SoccerStrategy):
+class RandomStrategy(SoccerStrategy):
     def __init__(self):
-        pass
+        self.name="Random"
     def start_battle(self,state):
         pass
     def finish_battle(self,won):
         pass
     def compute_strategy(self,state,player,teamid):
-        out = Outils(state, teamid, player)
-        tir = state.get_goal_center(self.team_adverse(teamid)) - player.position
-        y_adv = out.jpro().y
-        y_me = player.position.y
-        if(y_adv > y_me):
-            diff = tir - player.position
-            go = Vector2D.create_polar(diff.angle - 0.35, 2)
-        else:           
-            diff = tir - player.position
-            go = Vector2D.create_polar(diff.angle + 0.35, 2)
-        if(out.canshoot()):
-            return SoccerAction(Vector2D(0,0), go)
-        else:
-            return SoccerAction(Vector2D(0,0), Vector2D(0,0))
+        vitesse = Vector2D.create_random(-1,1)
+        tir = Vector2D.create_random(-1,1)
+        return SoccerAction(vitesse,tir)
+    def copy(self):
+        return RandomStrategy()
     def create_strategy(self):
-        return Esquive()
-    def team_adverse(self,teamid):
-        if (teamid==1):
-            return 2
-        else :
-            return 1
-
+        return RandomStrategy()
 
 class FonceurStrategy(SoccerStrategy):
     def __init__(self):
@@ -79,7 +64,6 @@ class AllerVersUnPoint(SoccerStrategy) :
         return AllerVersUnPoint(self.direction)
     def create_strategy(self):
         return AllerVersUnPoint(self.direction)
-
 
 
 class AllerVersBallon(SoccerStrategy) :
@@ -123,17 +107,41 @@ class Tirer(SoccerStrategy) :
             return 1
 
 
+class GoalStrategy(SoccerStrategy):
+    def __init__(self):
+        self.name="Goal"
+    def start_battle(self,state):
+        pass
+    def finish_battle(self,won):
+        pass
+    def compute_strategy(self,state,player,teamid):
+        diff = state.ball.position - player.position
+        tir = Vector2D(0,0)
+        if diff.norm > 5 :
+            vitesse = state.ball.position + state.get_goal_center(teamid) - player.position - player.position
+        else :
+            vitesse = state.ball.position - player.position
+        if player.position.distance(state.ball.position)<(PLAYER_RADIUS+BALL_RADIUS) :    
+            tir = state.get_goal_center(self.team_adverse(teamid)) - player.position
+        return SoccerAction(vitesse,tir)
+    def copy(self):
+        return GoalStrategy()
+    def create_strategy(self):
+        return GoalStrategy()
+    def team_adverse(self,teamid):
+        if (teamid==1):
+            return 2
+        else :
+            return 1
 
-        
-        
+                
 class Degager(SoccerStrategy) :
     def __init__(self):
         SoccerStrategy.__init__(self,"dégager")  
     def start_battle(self,state):
         pass
     def finish_battle(self,won):
-        pass
-    
+        pass  
     def joueurprocheballon (self, state, player, teamid):
         if (teamid == 1):
             res = [(state.ball.position.distance(p.position),p) for p in state.team1.players if p!= player]
@@ -161,35 +169,6 @@ class Degager(SoccerStrategy) :
         else :
             return 1
 
-
-class GoalStrategy(SoccerStrategy):
-    def __init__(self):
-        self.name="Goal"
-    def start_battle(self,state):
-        pass
-    def finish_battle(self,won):
-        pass
-    def compute_strategy(self,state,player,teamid):
-        diff = state.ball.position - player.position
-        tir = Vector2D(0,0)
-        if diff.norm > 5 :
-            vitesse = state.ball.position + state.get_goal_center(teamid) - player.position - player.position
-        else :
-            vitesse = state.ball.position - player.position
-        if player.position.distance(state.ball.position)<(PLAYER_RADIUS+BALL_RADIUS) :    
-            tir = state.get_goal_center(self.team_adverse(teamid)) - player.position
-        return SoccerAction(vitesse,tir)
-    def copy(self):
-        return GoalStrategy()
-    def create_strategy(self):
-        return GoalStrategy()
-    def team_adverse(self,teamid):
-        if (teamid==1):
-            return 2
-        else :
-            return 1
-   
-
 class ComposeStrategy(SoccerStrategy):
     def __init__(self,vitesse,tir):
         self.vitesse = vitesse
@@ -204,7 +183,6 @@ class ComposeStrategy(SoccerStrategy):
         return ComposeStrategy(self.vitesse.copy(),self.tir.copy())
     def create_strategy(self):
         return ComposeStrategy()
-
 
 class Defenseur (SoccerStrategy):
     def __init__(self):
@@ -228,7 +206,6 @@ class Defenseur (SoccerStrategy):
     def create_strategy(self):
         return Defenseur()
 
-
 class Dribble(SoccerStrategy):
     def __init__(self):
         SoccerStrategy.__init__(self,"dribbler")
@@ -249,11 +226,6 @@ class Dribble(SoccerStrategy):
             return 2
         else :
             return 1
-
-
-def aleballon(self,state,player,teamid):
-   return player.position.distance(self.ball.position)<(PLAYER_RADIUS+BALL_RADIUS)
-
 
 class SimpleSelector(SoccerStrategy):
     def __init__(self):
@@ -283,4 +255,7 @@ class PremSelector(SimpleSelector):
         if (teamid==1):
             return 0
         return -1
+
+
+
         
