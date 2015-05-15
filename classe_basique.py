@@ -10,36 +10,21 @@ from soccersimulator import Vector2D, SoccerBattle, SoccerPlayer, SoccerTeam, So
 from soccersimulator import PygletObserver,ConsoleListener,LogListener, PLAYER_RADIUS, BALL_RADIUS, GAME_WIDTH, GAME_HEIGHT
 
 
-class Esquive(SoccerStrategy):
+class RandomStrategy(SoccerStrategy):
     def __init__(self):
-        pass
+        self.name="Random"
     def start_battle(self,state):
         pass
     def finish_battle(self,won):
         pass
     def compute_strategy(self,state,player,teamid):
-        out = Outils(state, teamid, player)
-        tir = state.get_goal_center(self.team_adverse(teamid)) - player.position
-        y_adv = out.jpro().y
-        y_me = player.position.y
-        if(y_adv > y_me):
-            diff = tir - player.position
-            go = Vector2D.create_polar(diff.angle - 0.35, 2)
-        else:           
-            diff = tir - player.position
-            go = Vector2D.create_polar(diff.angle + 0.35, 2)
-        if(out.canshoot()):
-            return SoccerAction(Vector2D(0,0), go)
-        else:
-            return SoccerAction(Vector2D(0,0), Vector2D(0,0))
+        vitesse = Vector2D.create_random(-1,1)
+        tir = Vector2D.create_random(-1,1)
+        return SoccerAction(vitesse,tir)
+    def copy(self):
+        return RandomStrategy()
     def create_strategy(self):
-        return Esquive()
-    def team_adverse(self,teamid):
-        if (teamid==1):
-            return 2
-        else :
-            return 1
-
+        return RandomStrategy()
 
 class FonceurStrategy(SoccerStrategy):
     def __init__(self):
